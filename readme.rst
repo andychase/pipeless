@@ -12,19 +12,23 @@ It looks like this:
 
 .. code-block:: python
 
-    >>> error_handler = lambda item, exception: None
-    >>> function, run, _ = pipeline(error_handler)
-    >>> @function
-    ... def add_one():
-    ...     return lambda _: _+1
-    >>> list(run([0, 1, 3]))
-    [1, 2, 4]
-    >>> @function
-    ... def twofer(): 
-    ...     def func(item): return [item, item]
-    ...     return func
-    >>> list(run([0, 1, 3]))
-    [1, 1, 2, 2, 4, 4]
+    error_handler = lambda item, exception: None
+    function, run, _ = pipeline(error_handler)
+    
+    
+    @function
+    def add_one():
+        return lambda _: _+1
+    list(run([0, 1, 3]))
+    # => [1, 2, 4]
+    
+    
+    @function
+    def twofer(): 
+        def func(item): return [item, item]
+            return func
+    list(run([0, 1, 3]))
+    # => [1, 1, 2, 2, 4, 4]
 
 *  Pipelines operate over a source iterator (like a generator or a list).
 *  Functions can return 1 Item, None to drop the item, or
