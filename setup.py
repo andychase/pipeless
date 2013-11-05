@@ -30,9 +30,9 @@ setup(name='Pipeless',
       Also provides a simple Optionally-Argumented NamedTuple and a Commmand Line Generator.
       """,
       author='Andy Chase',
+      author_email='andy@asperous.us',
       url='http://github.com/asperous/pipeless',
       download_url="https://github.com/asperous/pipeless/archive/master.zip",
       license="MIT",
-      packages=['pipeless'],
-      install_requires=[]
+      py_modules=['pipeless']
      )
