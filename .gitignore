@@ -1,0 +1,6 @@
+*.pyc
+.idea/*
+doc/build/*
+doc/html/*
+MANIFEST
+dist/*
