@@ -1,7 +1,6 @@
-Pipeless
-=========
+# Pipeless
 
-*[=|Pipeless|=] provides a simple framework for building a data pipeline.*
+*A simple framework for building a data pipeline.*
 
 |Build Status|
 
@@ -29,7 +28,7 @@ It looks like this:
 *  Pipelines operate over a source iterator (like a generator or a list).
 *  Functions can return 1 Item, None to drop the item, or
    a generator. If a generator is given, the items all continue along the pipeline,
-   creating like a fork.
+   creating a fork.
 *  All exception are caught and andled by the ``error_handler`` input argument
    to prevent one broken item from stoping the flow.
 
@@ -42,8 +41,7 @@ It looks like this:
 
 Also provides a simple optionally-argumented NamedTuple and a commmand line interface generator.
 
-Installation
-------------
+### Installation
 
 Supports Python 2.7 and Python 3.x. Python 2.6 will need the ordereddict package.
 
@@ -53,18 +51,15 @@ Supports Python 2.7 and Python 3.x. Python 2.6 will need the ordereddict package
 
 or copy ``pipeless.py`` into your project.
 
-Support
--------
+### Support
 
 Need some help? Send me an email at andy@asperous.us and I'll do my best to help you.
 
-Contribution
-------------
+### Contribution
 
 Send me suggestions, issues, and pull requests on Github and I'll gladly review them!
 
-Licence
--------
+### Licence
 
 The MIT License (MIT)
 
