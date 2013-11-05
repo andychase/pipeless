@@ -1,0 +1,96 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <title>Pipeless: Simple Pipelines in Python</title>
+    <meta name="description" content="A simple Python library for building a data pipeline." />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <link href='http://fonts.googleapis.com/css?family=Knewave|Lato' rel='stylesheet' type='text/css' />
+    <link href='normalize.css' rel='stylesheet' type='text/css' />
+
+<style type="text/css">
+body {
+    background-image: url('pipe_tile.jpg');
+    
+    font-family: "Lato", sans-serif;
+}
+#header {
+  width: 100%;
+  height: 900px;
+  background-image: url('pipe2.jpg');
+  background-repeat: no-repeat;
+  background-position: top center;
+  position: relative;
+  bottom: 133px;
+  text-align: center;
+}
+#header h1 {
+    text-align: center;
+    font-weight: 700;
+    font-size: 60pt;
+    text-shadow: 0 2px 15px rgba(0, 0, 0, 0.9);
+    position: relative;
+    top: 180px;
+    margin-bottom: 200px;
+    display: block;
+    color: transparent;
+}
+#desc {
+  position: relative;
+  bottom: 475px;
+  text-align: center;
+}
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); font-weight: bold; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(104,151,187); }
+.s4 { color: rgb(128,128,128); }
+.source { 
+  text-align: left;
+  background-color: #2b2b2b;
+  width: 390px;
+  padding: 20px;
+  border-radius: 5px;
+  margin: 80px auto 20px auto ;
+}
+</style>
+</head>
+<body>
+<a href="https://github.com/asperous"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 9;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+<div id="header">
+<h1>Pipeless</h1>
+</div>    
+<div id="desc">
+<p>A simple Python library for building a data pipeline.</p>
+<div class="source">
+<pre>
+<span class="s0">from </span><span class="s1">pipeless </span><span class="s0">import </span><span class="s1">pipeline 
+ 
+error_handler = </span><span class="s0">lambda </span><span class="s1">item</span><span class="s2">, </span><span class="s1">exception: None 
+function</span><span class="s2">, </span><span class="s1">run</span><span class="s2">, </span><span class="s1">_ = pipeline(error_handler) 
+ 
+ 
+@function 
+</span><span class="s0">def </span><span class="s1">add_one(): 
+    </span><span class="s0">return lambda </span><span class="s1">_: _+</span><span class="s3">1</span><span class="s1"> 
+ 
+ 
+@function 
+</span><span class="s0">def </span><span class="s1">twofer(): 
+    </span><span class="s0">def </span><span class="s1">func(item): 
+        </span><span class="s0">return </span><span class="s1">[item</span><span class="s2">, </span><span class="s1">item] 
+    </span><span class="s0">return </span><span class="s1">func 
+ 
+ 
+list(run([</span><span class="s3">0</span><span class="s2">, </span><span class="s3">1</span><span class="s2">, </span><span class="s3">3</span><span class="s1">])) 
+</span><span class="s4"># =&gt; [1, 1, 2, 2, 4, 4]</span></pre>
+</div>
+
+<iframe src="http://asperous.github.io/github-buttons/github-btn.html?user=asperous&repo=pipeless&type=view&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="170" height="30"></iframe>
+<a href="https://travis-ci.org/asperous/pipeless"><img alt="Build Status" src="https://travis-ci.org/asperous/pipeless.png?branch=master" style="max-width:100%;"></a>
+</div>
+</body>
+</html>
