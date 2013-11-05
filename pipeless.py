@@ -25,9 +25,10 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 try:
-  from collections import OrderedDict
+    from collections import OrderedDict
 except ImportError:
-  from ordereddict import OrderedDict
+    #noinspection PyUnresolvedReferences
+    from ordereddict import OrderedDict
 from collections import namedtuple, Iterable
 import sys
 
@@ -51,23 +52,37 @@ def namedtuple_optional(schema, name):
     return generated_class
 
 
-def pipeline(error_func):
+def default_error_func(item, exception):
+    print "! Problem with item {}".format(item)
+    raise exception
+
+
+def pipeline(error_func=default_error_func):
     """ Pipeline
     Takes:
 
-        - A function to run on errors that takes
-          errored_titems and exceptions as inputs.
-          Example: error_function(errored_item, exception)
+    - (Optional) A function to run on errors that takes
+      an errored_item and an exception as inputs.
+
+      If a result other than None is returned, result
+      continues in the pipeline. Default error handler:
+      raises exception.
+      Example: error_function(errored_item, exception)
 
     Outputs:
-        - function_annotator <- Annotate your pipeline functions with this in order in which they should run.
-                                The pipeline functions should generate and return (a function that takes 1 item,
-                                and returns None, 1 item, or yields many items).
-                                ``` def fn(): return lambda item: item + 1 ```
-        - master_runner(item_generator) <- Takes a generator or list of items and creates a generator
-                                           out of them.
-                                           Optional arguments ```functions_to_run``` and ```function_groups_to_skip```
-        - functions_dict <- An ordered dict containing your functions. You can ignore this one if you like.
+
+    - function_annotator
+     ^- Annotate your pipeline functions with this in order in which they should run.
+     The pipeline functions should generate and return (a function that takes 1 item,
+     and returns None, 1 item, or yields many items).
+     `` def fn(): return lambda item: item + 1 ``
+
+    - master_runner(item_generator)
+      ^- Takes a generator or list of items and creates a generator out of them.
+      Optional arguments ```functions_to_run``` and ```function_groups_to_skip```
+
+    - functions_dict
+      ^- An OrderedDict containing your functions. You can ignore this one if you like.
 
     >>> function, run, _ = pipeline(lambda item, e: None)
     >>> @function
@@ -80,8 +95,19 @@ def pipeline(error_func):
     [1, 1, 2, 2, 4, 4]
     >>> list(run(run([0]))) # Composable
     [2, 2, 2, 2]
+    >>> @function
+    ... def none(): return lambda i: None
+    >>> list(run([0]))
+    []
+    >>> function, run, _ = pipeline(lambda item, e: 100)
+    >>> @function
+    ... def raises_exception():
+    ...     def func(_):
+    ...         raise Exception
+    ...     return func
+    >>> list(run([0]))
+    [100]
     """
-    # Function Decorators
     functions_dict = OrderedDict()
 
     def add_func(func, group):
@@ -118,6 +144,7 @@ def pipeline(error_func):
                     yield item
             except Exception as e:
                 error_func(item, e)
+                raise StopIteration
 
         if functions_to_run is None:
             functions_to_run = get_functions_to_run(function_groups_to_skip=function_groups_to_skip)
@@ -128,9 +155,9 @@ def pipeline(error_func):
                 try:
                     item = function(item)
                 except Exception as exception:
-                    error_func(item, exception)
-                    break
+                    item = error_func(item, exception)
                 if item is None:
+                    should_yield = False
                     break
                 if isinstance(item, Iterable):
                     should_yield = False
@@ -144,7 +171,7 @@ def pipeline(error_func):
 
 
 def commandline(command_line_help):
-    """ Super Minimal command line to connect your pipeline to the world.
+    """ Minimal command line to connect your pipeline to the world.
     Takes:
 
     - Usage/Help info string. Trick: Use __doc__.
@@ -154,11 +181,15 @@ def commandline(command_line_help):
     - command_annotator <- Annotate cli commands with this
     - cli <- if __name__ == "__main__" this function.
 
-    Connect commandline with pipeline like this:
+    Connect commandline with pipeline like this::
 
         run, _, __ = pipeline(...)
         command, cli = commandline(__doc__)
         command(lambda: run(<item_generator>), 'run')
+
+    or with::
+
+        commandline_pipeline_connector(command_annotator, pipeline_run_function, item_source)
 
     >>> command, cli = commandline('Usage: 1 2 3')
     >>> @command
@@ -196,4 +227,4 @@ def commandline(command_line_help):
 
 
 def commandline_pipeline_connector(command_annotator, pipeline_run_function, item_source):
-  command_annotator(lambda: pipeline_run_function(item_source), 'run')
+    command_annotator(lambda: pipeline_run_function(item_source), 'run')
