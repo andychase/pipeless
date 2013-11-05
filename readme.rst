@@ -1,4 +1,5 @@
-# Pipeless
+Pipeless
+=========
 
 *A simple framework for building a data pipeline.*
 
@@ -41,9 +42,10 @@ It looks like this:
 
 Also provides a simple optionally-argumented NamedTuple and a commmand line interface generator.
 
-### Installation
+Installation
+~~~~~~~~~~~~
 
-Supports Python 2.7 and Python 3.x. Python 2.6 will need the ordereddict package.
+Supports Python 2.6 (w/ ordereddict package) Python 2.7, Python 3.x, pypy.
 
 .. code-block:: python
 
@@ -51,15 +53,18 @@ Supports Python 2.7 and Python 3.x. Python 2.6 will need the ordereddict package
 
 or copy ``pipeless.py`` into your project.
 
-### Support
+Support
+~~~~~~~
 
 Need some help? Send me an email at andy@asperous.us and I'll do my best to help you.
 
-### Contribution
+Contribution
+~~~~~~~~~~~~
 
 Send me suggestions, issues, and pull requests on Github and I'll gladly review them!
 
-### Licence
+Licence
+~~~~~~~
 
 The MIT License (MIT)
 
