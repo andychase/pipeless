@@ -120,6 +120,8 @@ def pipeline(error_func=None):
                 for item in source:
                     yield item
             except Exception as e:
+                if error_func is None:
+                    raise
                 error_func(item, e)
                 raise StopIteration
 
@@ -135,10 +137,11 @@ def pipeline(error_func=None):
                     if error_func is None:
                         raise
                     item = error_func(item, exception)
+
                 if item is None:
                     should_yield = False
                     break
-                if isinstance(item, Iterable):
+                if isinstance(item, Iterable) and not isinstance(item, tuple):
                     should_yield = False
                     for i in run_pipeline(item, functions_to_run[fn_num+1:], function_groups_to_skip):
                         yield i
