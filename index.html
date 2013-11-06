@@ -47,7 +47,8 @@ body {
 .s1 { color: rgb(169,183,198); }
 .s2 { color: rgb(204,120,50); }
 .s3 { color: rgb(104,151,187); }
-.s4 { color: rgb(128,128,128); }
+.s4 { color: rgb(165,194,97); }
+.s5 { color: rgb(128,128,128); }
 .source { 
   text-align: left;
   background-color: #2b2b2b;
@@ -60,34 +61,31 @@ body {
 </style>
 </head>
 <body>
-<a href="https://github.com/asperous"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 9;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
 <div id="header">
 <h1>Pipeless</h1>
 </div>    
 <div id="desc">
 <p>A simple Python library for building a data pipeline.</p>
-<div class="source">
-<pre>
-<span class="s0">from </span><span class="s1">pipeless </span><span class="s0">import </span><span class="s1">pipeline 
- 
-error_handler = </span><span class="s0">lambda </span><span class="s1">item</span><span class="s2">, </span><span class="s1">exception: None 
-function</span><span class="s2">, </span><span class="s1">run</span><span class="s2">, </span><span class="s1">_ = pipeline(error_handler) 
- 
- 
-@function 
-</span><span class="s0">def </span><span class="s1">add_one(): 
-    </span><span class="s0">return lambda </span><span class="s1">_: _+</span><span class="s3">1</span><span class="s1"> 
- 
- 
-@function 
-</span><span class="s0">def </span><span class="s1">twofer(): 
-    </span><span class="s0">def </span><span class="s1">func(item): 
-        </span><span class="s0">return </span><span class="s1">[item</span><span class="s2">, </span><span class="s1">item] 
-    </span><span class="s0">return </span><span class="s1">func 
- 
- 
-list(run([</span><span class="s3">0</span><span class="s2">, </span><span class="s3">1</span><span class="s2">, </span><span class="s3">3</span><span class="s1">])) 
-</span><span class="s4"># =&gt; [1, 1, 2, 2, 4, 4]</span></pre>
+<div class="source"><pre>
+<span class="s0">from </span><span class="s1">pipeless </span><span class="s0">import </span><span class="s1">pipeline
+
+error_handler = </span><span class="s0">lambda </span><span class="s1">item</span><span class="s2">, </span><span class="s1">exception: None
+function</span><span class="s2">, </span><span class="s1">run</span><span class="s2">, </span><span class="s1">_ = pipeline(error_handler)
+
+
+@function
+</span><span class="s0">def </span><span class="s1">forwards_and_backwards(_):
+    </span><span class="s0">yield </span><span class="s1">_
+    </span><span class="s0">yield </span><span class="s1">_[::-</span><span class="s3">1</span><span class="s1">]
+
+
+@function
+</span><span class="s0">def </span><span class="s1">title(_):
+    </span><span class="s0">return </span><span class="s1">_.title()
+
+list(run([</span><span class="s4">'tool'</span><span class="s2">, </span><span class="s4">'flow'</span><span class="s1">]))
+</span><span class="s5"># =&gt; ['Tool', 'Loot', 'Flow', 'Wolf']</span><span class="s1">
+</span></pre>
 </div>
 
 <iframe src="http://asperous.github.io/github-buttons/github-btn.html?user=asperous&repo=pipeless&type=view&size=large"
