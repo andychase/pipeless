@@ -42,6 +42,7 @@ def namedtuple_optional(schema, name):
             # Refill with defaults if not in argument list
             fields = schema.copy()
             fields.update(args)
+            cls.__name__ = name
             return super(generated_class, cls).__new__(cls, **fields)
 
     return generated_class
