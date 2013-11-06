@@ -2,7 +2,7 @@
 from distutils.core import setup
 
 setup(name='Pipeless',
-      version='1.0',
+      version='1.0.1',
       description='Simple pipelines building framework.',
       long_description= \
       """ [=|Pipeless|=] provides a simple framework
@@ -31,7 +31,7 @@ setup(name='Pipeless',
       """,
       author='Andy Chase',
       author_email='andy@asperous.us',
-      url='http://github.com/asperous/pipeless',
+      url='http://asperous.github.io/pipeless',
       download_url="https://github.com/asperous/pipeless/archive/master.zip",
       license="MIT",
       py_modules=['pipeless']
