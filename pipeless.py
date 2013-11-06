@@ -42,6 +42,7 @@ def namedtuple_optional(schema, name):
             # Refill with defaults if not in argument list
             fields = schema.copy()
             fields.update(args)
+            #noinspection PyAttributeOutsideInit
             cls.__name__ = name
             return super(generated_class, cls).__new__(cls, **fields)
 
@@ -90,20 +91,6 @@ def pipeline(error_func=default_error_func):
     ... def twofer(): return lambda item: [item, item]
     >>> list(run([0, 1, 3]))
     [1, 1, 2, 2, 4, 4]
-    >>> list(run(run([0]))) # Composable
-    [2, 2, 2, 2]
-    >>> @function
-    ... def none(): return lambda i: None
-    >>> list(run([0]))
-    []
-    >>> function, run, _ = pipeline(lambda item, e: 100)
-    >>> @function
-    ... def raises_exception():
-    ...     def func(_):
-    ...         raise Exception
-    ...     return func
-    >>> list(run([0]))
-    [100]
     """
     functions_list = []
 
@@ -206,6 +193,7 @@ def commandline(command_line_help=None):
         if name is None:
             name = func.__name__
         commands.append((name, func))
+        return func
 
     def call(_=None, command=None, *args):
         """ Command line interface
