@@ -56,8 +56,6 @@ Optional NamedTuples
 >>> from pipeless import namedtuple_optional
 >>> new_class = namedtuple_optional({'field': 'value'}, 'cool_class')
 >>> my_instance = new_class()
->>> type(my_instance)
-<class 'pipeless.cool_class'>
 >>> my_instance.field
 'value'
 
