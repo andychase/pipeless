@@ -21,15 +21,16 @@ It looks like this:
     @function
     def add_one(_):
         return _ + 1
+    
+    list(run([1, 2, 3]))  # [2, 3, 4]
 
 
     @function
     def doubler(_):
-        return [_, _]
+        yield _
+        yield _ * 2
 
-
-    list(run([1, 2, 3]))
-    # => [2, 4,  3, 6,  4, 8]
+    list(run([1, 2, 3]))  # [2, 4, 3, 6, 4, 8]
 
 *  Pipelines operate over a source iterator (like a generator or a list).
 *  Functions can return 1 Item, None to drop the item, or
