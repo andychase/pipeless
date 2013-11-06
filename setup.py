@@ -2,7 +2,7 @@
 from distutils.core import setup
 
 setup(name='Pipeless',
-      version='1.0.1',
+      version='1.0.2',
       description='Simple pipelines building framework.',
       long_description= \
       """ [=|Pipeless|=] provides a simple framework
