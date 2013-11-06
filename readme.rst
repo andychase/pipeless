@@ -58,7 +58,7 @@ See the doc strings in ``pipeline.py`` for a lot more information!
 Installation
 ~~~~~~~~~~~~
 
-Supports Python 2.6 (w/ ordereddict package) Python 2.7, Python 3.x, pypy.
+Supports Python 2.6, 2.7, 3.x, pypy.
 
 .. code-block:: bash
 

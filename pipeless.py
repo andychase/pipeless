@@ -24,11 +24,6 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
-try:
-    from collections import OrderedDict
-except ImportError:
-    #noinspection PyUnresolvedReferences
-    from ordereddict import OrderedDict
 from collections import namedtuple, Iterable
 import sys
 
@@ -72,17 +67,18 @@ def pipeline(error_func=default_error_func):
     Outputs:
 
     - function_annotator
-     ^- Annotate your pipeline functions with this in order in which they should run.
-     The pipeline functions should generate and return (a function that takes 1 item,
-     and returns None, 1 item, or yields many items).
-     `` def fn(): return lambda item: item + 1 ``
+      ^- Annotate your pipeline functions with this in order in which they should run.
+      The pipeline functions should generate and return (a function that takes 1 item,
+      and returns None, 1 item, or yields many items).
+      `` def fn(): return lambda item: item + 1 ``
 
     - master_runner(item_generator)
       ^- Takes a generator or list of items and creates a generator out of them.
       Optional arguments ```functions_to_run``` and ```function_groups_to_skip```
 
-    - functions_dict
-      ^- An OrderedDict containing your functions. You can ignore this one if you like.
+    - functions_list
+      ^- A list of tuples containing your functions as (group, name, function_builder).
+      You can ignore this one if you like.
 
     >>> function, run, _ = pipeline(lambda item, e: None)
     >>> @function
@@ -108,33 +104,33 @@ def pipeline(error_func=default_error_func):
     >>> list(run([0]))
     [100]
     """
-    functions_dict = OrderedDict()
+    functions_list = []
 
     def add_func(func, group):
-        functions_dict.setdefault(group, OrderedDict()).update({func.__name__: func})
+        """ Functions_list is a list of tuples to maintain order.
+            Originally it was an OrderedDict, but that became out of order
+            when you did group1 group2 group1.
+        """
+        functions_list.append((group, func.__name__, func))
         return func
 
-    def function_annotator(group=None):
-        if group is None:
-            group = '*'
+    def function_annotator(group=''):
         if callable(group):
-            return add_func(group, '*')
+            return add_func(group, '')
         else:
             return lambda func: add_func(func, group)
 
-    def get_functions_to_run(functions=functions_dict, function_groups_to_skip=None):
+    def get_functions_to_run(functions=functions_list, function_groups_to_skip=None):
         if function_groups_to_skip is None:
             function_groups_to_skip = []
-        functions_to_run = \
-            [group.values() for name, group in functions.items() if name not in function_groups_to_skip]
-        flatten = lambda arr: [item for sublist in arr for item in sublist]
+        functions_to_run = [fn for group, _, fn in functions if group not in function_groups_to_skip]
         build_function = lambda fn: fn()
 
         def check_function(fn):
             assert callable(fn), "Pipeless annotated functions should build a function"
             return fn
 
-        return list(map(check_function, map(build_function, flatten(functions_to_run))))
+        return [check_function(build_function(fn)) for fn in functions_to_run]
 
     def run_pipeline(item_generator=None, functions_to_run=None, function_groups_to_skip=None):
         def safe_source(source, error_func):
@@ -167,7 +163,7 @@ def pipeline(error_func=default_error_func):
             if should_yield:
                 yield item
 
-    return function_annotator, run_pipeline, functions_dict
+    return function_annotator, run_pipeline, functions_list
 
 
 def commandline(command_line_help):
@@ -202,23 +198,25 @@ def commandline(command_line_help):
     >>> cli()
     hey
     """
-    commands = OrderedDict()
+    commands = []
+    get_command_names = lambda: ", ".join([name for name, _ in set(commands)])
 
     def command_annotator(func, name=None):
         if name is None:
             name = func.__name__
-        commands.update({name: func})
+        commands.append((name, func))
 
     def call(_=None, command=None, *args):
         """ Command line interface
         """
+        commands_dict = dict(commands)
+
         if command is None:
             print(command_line_help.strip())
-        if command is None or command not in commands.keys():
-            print("Command options: " + ", ".join(commands.keys()))
-            return
-
-        commands[command](*args)
+        if command is None or command not in commands_dict.keys():
+            print("Command options: " + get_command_names())
+        else:
+            commands_dict[command](*args)
 
     def cli():
         call(*sys.argv)
