@@ -25,8 +25,10 @@ It looks like this:
     
     @function
     def twofer(): 
-        def func(item): return [item, item]
-            return func
+        def func(item): 
+            return [item, item]
+        return func
+    
     list(run([0, 1, 3]))
     # => [1, 1, 2, 2, 4, 4]
 
@@ -34,8 +36,6 @@ It looks like this:
 *  Functions can return 1 Item, None to drop the item, or
    a generator. If a generator is given, the items all continue along the pipeline,
    creating a fork.
-*  All exception are caught and andled by the ``error_handler`` input argument
-   to prevent one broken item from stoping the flow.
 
 .. code-block:: python
 
@@ -44,14 +44,23 @@ It looks like this:
     Input        -----1
                     Output [1,1]
 
+*  All exception are caught and handled by the optional ``error_handler`` input argument
+   to prevent one broken item from stoping the flow. If the handler returns something,
+   that something continues on down the pipeline.
+*  Functions can be grouped with an optional argument on the annotator i.e. ``@function('my_group')``.
+   Set up your functions this way and you can skip groups with the ``function_groups_to_skip`` argument
+   on the pipeline runner.
+
 Also provides a simple optionally-argumented NamedTuple and a commmand line interface generator.
+
+See the doc strings in ``pipeline.py`` for a lot more information!
 
 Installation
 ~~~~~~~~~~~~
 
 Supports Python 2.6 (w/ ordereddict package) Python 2.7, Python 3.x, pypy.
 
-.. code-block:: python
+.. code-block:: bash
 
     pip install pipeless
 
