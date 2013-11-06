@@ -47,11 +47,7 @@ def namedtuple_optional(schema, name):
     return generated_class
 
 
-def default_error_func(item, exception):
-    raise
-
-
-def pipeline(error_func=default_error_func):
+def pipeline(error_func=None):
     """ Pipeline
     Takes:
 
@@ -136,6 +132,8 @@ def pipeline(error_func=default_error_func):
                 try:
                     item = function(item)
                 except Exception as exception:
+                    if error_func is None:
+                        raise
                     item = error_func(item, exception)
                 if item is None:
                     should_yield = False
