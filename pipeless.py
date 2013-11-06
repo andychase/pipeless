@@ -48,8 +48,7 @@ def namedtuple_optional(schema, name):
 
 
 def default_error_func(item, exception):
-    print("! Problem with item: {}".format(item))
-    raise exception
+    raise
 
 
 def pipeline(error_func=default_error_func):
