@@ -167,7 +167,7 @@ def pipeline(error_func=default_error_func):
     return function_annotator, run_pipeline, functions_list
 
 
-def commandline(command_line_help):
+def commandline(command_line_help=None):
     """ Minimal command line to connect your pipeline to the world.
     Takes:
 
@@ -212,7 +212,7 @@ def commandline(command_line_help):
         """
         commands_dict = dict(commands)
 
-        if command is None:
+        if command is None and command_line_help:
             print(command_line_help.strip())
         if command is None or command not in commands_dict.keys():
             print("Command options: " + get_command_names())
