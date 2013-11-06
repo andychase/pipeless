@@ -12,25 +12,24 @@ It looks like this:
 
 .. code-block:: python
 
+    from pipeless import pipeline
+
     error_handler = lambda item, exception: None
     function, run, _ = pipeline(error_handler)
-    
-    
+
+
     @function
-    def add_one():
-        return lambda _: _+1
-    list(run([0, 1, 3]))
-    # => [1, 2, 4]
-    
-    
+    def add_one(_):
+        return _ + 1
+
+
     @function
-    def twofer(): 
-        def func(item): 
-            return [item, item]
-        return func
-    
-    list(run([0, 1, 3]))
-    # => [1, 1, 2, 2, 4, 4]
+    def doubler(_):
+        return [_, _]
+
+
+    list(run([1, 2, 3]))
+    # => [2, 4,  3, 6,  4, 8]
 
 *  Pipelines operate over a source iterator (like a generator or a list).
 *  Functions can return 1 Item, None to drop the item, or
@@ -39,21 +38,26 @@ It looks like this:
 
 .. code-block:: python
 
-     add_one  twofer
-    [0]--|------\-----1
-    Input        -----1
-                    Output [1,1]
+     add_one  doubler
+    [1]--|-2----\-----2
+    Input        -----4
+                    Output [2,4]
 
 *  All exception are caught and handled by the optional ``error_handler`` input argument
-   to prevent one broken item from stoping the flow. If the handler returns something,
+   to prevent one broken item from stopping the flow. If the handler returns something,
    that something continues on down the pipeline.
 *  Functions can be grouped with an optional argument on the annotator i.e. ``@function('my_group')``.
    Set up your functions this way and you can skip groups with the ``function_groups_to_skip`` argument
    on the pipeline runner.
 
-Also provides a simple optionally-argumented NamedTuple and a commmand line interface generator.
+Also provides a simple optionally-argumented NamedTuple and a command line interface generator.
 
 See the doc strings in ``pipeline.py`` for a lot more information!
+
+Versions:
+
+- *1.1* Function builders optional.
+- *1.0.1* Fixed ordering problem.
 
 Installation
 ~~~~~~~~~~~~

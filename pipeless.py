@@ -24,7 +24,8 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
-from collections import namedtuple, Iterable
+from collections import namedtuple
+from types import GeneratorType
 import sys
 
 
@@ -47,17 +48,20 @@ def namedtuple_optional(schema, name):
     return generated_class
 
 
-def pipeline(error_func=None):
+def pipeline(error_func=None, use_builders=False):
     """ Pipeline
     Takes:
 
-    - (Optional) A function to run on errors that takes
-      an errored_item and an exception as inputs.
+    - (Optional, Default: None) A function to run on errors that
+      takes an errored_item and an exception as inputs.
 
       If a result other than None is returned, result
-      continues in the pipeline. Default error handler:
-      raises exception.
+      continues in the pipeline. If None, pipeline
+      exceptions are raised (useful for debugging).
       Example: error_function(errored_item, exception)
+
+    - (Optional, Default: False) A True/False on whether you want the pipeline
+      to be built using function builders or just the pipeline functions directly.
 
     Outputs:
 
@@ -77,13 +81,13 @@ def pipeline(error_func=None):
 
     >>> function, run, _ = pipeline(lambda item, e: None)
     >>> @function
-    ... def up_one(): return lambda item: item+1
-    >>> list(run([0, 1, 3]))
-    [1, 2, 4]
+    ... def forwards_and_backwards(_):
+    ...     yield _
+    ...     yield _[::-1]
     >>> @function
-    ... def twofer(): return lambda item: [item, item]
-    >>> list(run([0, 1, 3]))
-    [1, 1, 2, 2, 4, 4]
+    ... def title(_): return _.title()
+    >>> list(run([-1, 'tool', 'flow', 'bat']))
+    ['Tool', 'Loot', 'Flow', 'Wolf', 'Bat', 'Tab']
     """
     functions_list = []
 
@@ -105,13 +109,16 @@ def pipeline(error_func=None):
         if function_groups_to_skip is None:
             function_groups_to_skip = []
         functions_to_run = [fn for group, _, fn in functions if group not in function_groups_to_skip]
-        build_function = lambda fn: fn()
 
-        def check_function(fn):
-            assert callable(fn), "Pipeless annotated functions should build a function"
-            return fn
+        if use_builders:
+            def build(fn):
+                fn = fn()
+                assert callable(fn), \
+                    "Pipeless annotated functions should build a function when use_builders=True"
+                return fn
+            functions_to_run = [build(fn) for fn in functions_to_run]
 
-        return [check_function(build_function(fn)) for fn in functions_to_run]
+        return functions_to_run
 
     def run_pipeline(item_generator=None, functions_to_run=None, function_groups_to_skip=None):
         def safe_source(source, error_func):
@@ -141,7 +148,7 @@ def pipeline(error_func=None):
                 if item is None:
                     should_yield = False
                     break
-                if isinstance(item, Iterable) and not isinstance(item, tuple):
+                if isinstance(item, GeneratorType):
                     should_yield = False
                     for i in run_pipeline(item, functions_to_run[fn_num+1:], function_groups_to_skip):
                         yield i

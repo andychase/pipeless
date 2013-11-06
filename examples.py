@@ -4,11 +4,13 @@ Basic functionality
 >>> from pipeless import pipeline
 >>> function, run, _ = pipeline(lambda item, e: None)
 >>> @function
-... def up_one(): return lambda item: item+1
+... def up_one(_): return _+1
 >>> list(run([0, 1, 3]))
 [1, 2, 4]
 >>> @function
-... def twofer(): return lambda item: [item, item]
+... def twofer(_):
+...     yield _
+...     yield _
 >>> list(run([0, 1, 3]))
 [1, 1, 2, 2, 4, 4]
 
@@ -18,7 +20,7 @@ Pipelines are composable
 
 Returning None Drops result
 >>> @function
-... def none(): return lambda i: None
+... def none(_): return None
 >>> list(run([0]))
 []
 
@@ -35,22 +37,30 @@ Exception handler can replace result
 Grouping up functions
 >>> function, run, _ = pipeline(lambda item, e: None)
 >>> @function('my_group')
-... def nothing_special(): return lambda i: i
+... def nothing_special(_): return _
 >>> list(run([1,2,3]))
 [1, 2, 3]
 >>> @function('baller_group')
-... def triple_double():
-...     return lambda i: 3*i**2
+... def triple_double(_):
+...     return 3*(_**2)
 >>> list(run([1,2,3]))
 [3, 12, 27]
 >>> @function('my_group')
-... def zeroed(): return lambda i: 0
+... def zeroed(_): return 0
 >>> list(run([1,2,3]))
 [0, 0, 0]
 >>> list(run([1,2,3], function_groups_to_skip=['my_group']))
 [3, 12, 27]
 >>> list(run([1,2,3], function_groups_to_skip=['my_group', 'baller_group']))
 [1, 2, 3]
+
+
+Function Builders
+>>> function, run, _ = pipeline(lambda item, e: None, use_builders=True)
+>>> @function
+... def bob_the_builder(): return lambda _: _+1
+>>> list(run([1,2,3]))
+[2, 3, 4]
 
 Optional NamedTuples
 >>> from pipeless import namedtuple_optional
