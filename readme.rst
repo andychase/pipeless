@@ -74,7 +74,7 @@ or copy ``pipeless.py`` into your project.
 Support
 ~~~~~~~
 
-Need some help? Send me an email at andy@asperous.us and I'll do my best to help you.
+Need some help? Send me an email at theandychase@gmail.com and I'll do my best to help you.
 
 Contribution
 ~~~~~~~~~~~~
