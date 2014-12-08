@@ -12,13 +12,13 @@ def readme_or_docstring():
         return pipeless.__doc__
 
 setup(name='Pipeless',
-      version='1.1',
+      version='1.11',
       description='Simple pipelines building framework.',
       long_description=readme_or_docstring(),
       author='Andy Chase',
-      author_email='andy@asperous.us',
-      url='http://asperous.github.io/pipeless',
-      download_url="https://github.com/asperous/pipeless/archive/master.zip",
+      author_email='theandychase@gmail.com',
+      url='https://andychase.me/pipeless',
+      download_url="https://github.com/andychase/pipeless/archive/master.zip",
       license="MIT",
       py_modules=['pipeless']
       )
