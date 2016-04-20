@@ -24,28 +24,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
-from collections import namedtuple
 from types import GeneratorType
-import sys
-
-
-def namedtuple_optional(schema, name):
-    """ NamedTuple with optional keys.
-    >>> schema = namedtuple_optional({'key': 0, 'key2': ''}, 'optional_schema')
-    >>> schema(key=1).key, schema(key=1).key2,
-    (1, '')
-    """
-    class generated_class(namedtuple(name, schema.keys())):
-        def __new__(cls, **args):
-            for arg in args:
-                if arg not in schema:
-                    raise KeyError(arg)
-            # Refill with defaults if not in argument list
-            fields = schema.copy()
-            fields.update(args)
-            return super(generated_class, cls).__new__(cls, **fields)
-
-    return generated_class
 
 
 def pipeline(error_func=None, use_builders=False):
@@ -116,6 +95,7 @@ def pipeline(error_func=None, use_builders=False):
                 assert callable(fn), \
                     "Pipeless annotated functions should build a function when use_builders=True"
                 return fn
+
             functions_to_run = [build(fn) for fn in functions_to_run]
 
         return functions_to_run
@@ -150,73 +130,10 @@ def pipeline(error_func=None, use_builders=False):
                     break
                 if isinstance(item, GeneratorType):
                     should_yield = False
-                    for i in run_pipeline(item, functions_to_run[fn_num+1:], function_groups_to_skip):
+                    for i in run_pipeline(item, functions_to_run[fn_num + 1:], function_groups_to_skip):
                         yield i
                     break
             if should_yield:
                 yield item
 
     return function_annotator, run_pipeline, functions_list
-
-
-def commandline(command_line_help=None):
-    """ Minimal command line to connect your pipeline to the world.
-    Takes:
-
-    - Usage/Help info string. Trick: Use __doc__.
-
-    Outputs:
-
-    - command_annotator <- Annotate cli commands with this
-    - cli <- if __name__ == "__main__" this function.
-
-    Connect commandline with pipeline like this::
-
-        run, _, __ = pipeline(...)
-        command, cli = commandline(__doc__)
-        command(lambda: run(<item_generator>), 'run')
-
-    or with::
-
-        commandline_pipeline_connector(command_annotator, pipeline_run_function, item_source)
-
-    >>> command, cli = commandline('Usage: 1 2 3')
-    >>> @command
-    ... def do_something(): print("hey")
-    >>> sys.argv = ['.']
-    >>> cli()
-    Usage: 1 2 3
-    Command options: do_something
-    >>> sys.argv = ['.', 'do_something']
-    >>> cli()
-    hey
-    """
-    commands = []
-    get_command_names = lambda: ", ".join([name for name, _ in set(commands)])
-
-    def command_annotator(func, name=None):
-        if name is None:
-            name = func.__name__
-        commands.append((name, func))
-        return func
-
-    def call(_=None, command=None, *args):
-        """ Command line interface
-        """
-        commands_dict = dict(commands)
-
-        if command is None and command_line_help:
-            print(command_line_help.strip())
-        if command is None or command not in commands_dict.keys():
-            print("Command options: " + get_command_names())
-        else:
-            commands_dict[command](*args)
-
-    def cli():
-        call(*sys.argv)
-
-    return command_annotator, cli
-
-
-def commandline_pipeline_connector(command_annotator, pipeline_run_function, item_source):
-    command_annotator(lambda: pipeline_run_function(item_source), 'run')

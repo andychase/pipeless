@@ -1,7 +1,7 @@
 Pipeless
-=========
+========
 
-*A simple framework for building a data pipeline.*
+*A simple library for building a data pipeline.*
 
 |Build Status|
 
@@ -37,7 +37,7 @@ It looks like this:
    a generator. If a generator is given, the items all continue along the pipeline,
    creating a fork.
 
-.. code-block:: python
+..
 
      add_one  doubler
     [1]--|-2----\-----2
@@ -51,12 +51,11 @@ It looks like this:
    Set up your functions this way and you can skip groups with the ``function_groups_to_skip`` argument
    on the pipeline runner.
 
-Also provides a simple optionally-argumented NamedTuple and a command line interface generator.
-
-See the doc strings in ``pipeline.py`` for a lot more information!
+See the docstrings in ``pipeline.py`` for more information!
 
 Versions:
 
+- *2.0* Removed cli generator and optional tuples
 - *1.1* Function builders optional.
 - *1.0.1* Fixed ordering problem.
 
@@ -107,5 +106,5 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-.. |Build Status| image:: https://travis-ci.org/andychase/pipeless.png?branch=master
+.. |Build Status| image:: https://travis-ci.org/andychase/pipeless.svg?branch=master
    :target: https://travis-ci.org/andychase/pipeless

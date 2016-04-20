@@ -62,24 +62,4 @@ Function Builders
 >>> list(run([1,2,3]))
 [2, 3, 4]
 
-Optional NamedTuples
->>> from pipeless import namedtuple_optional
->>> new_class = namedtuple_optional({'field': 'value'}, 'cool_class')
->>> my_instance = new_class()
->>> my_instance.field
-'value'
-
-CLi Generator
->>> import sys
->>> from pipeless import commandline
->>> command, cli = commandline()
->>> @command
-... def print_when_1(_=0):
-...     if int(_) == 1:
-...         print('input was 1')
->>> sys.argv = ['.']; cli()
-Command options: print_when_1
->>> sys.argv = ['.', 'print_when_1']; cli()
->>> sys.argv = ['.', 'print_when_1', '1']; cli()
-input was 1
 """
