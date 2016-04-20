@@ -36,13 +36,17 @@ It looks like this:
 *  Functions can return 1 Item, None to drop the item, or
    a generator. If a generator is given, the items all continue along the pipeline,
    creating a fork.
-
-..
-
-     add_one  doubler
-    [1]--|-2----\-----2
-    Input        -----4
-                    Output [2,4]
+   
+   ::
+   
+    +-----------------------------------+
+    |                                   |
+    |    add_one   doubler              |
+    |    [1]--|-2----\-----2            |
+    |    Input        -----4            |
+    |                    Output [2,4]   |
+    |                                   |
+    +-----------------------------------+
 
 *  All exception are caught and handled by the optional ``error_handler`` input argument
    to prevent one broken item from stopping the flow. If the handler returns something,
